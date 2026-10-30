@@ -1,0 +1,17 @@
+{
+  "id": "./",
+  "name": "Minimal By Two Cuties — Handcrafted Blooms",
+  "short_name": "Minimal Blooms",
+  "description": "Browse handcrafted flower bouquets, keychains and thoughtful gift hampers. View starting prices and order on WhatsApp.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8f5f0",
+  "theme_color": "#f8f5f0",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
