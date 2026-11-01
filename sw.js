@@ -1,4 +1,4 @@
-const CACHE_NAME='minimal-by-two-cuties-v1';
+const CACHE_NAME='minimal-by-two-cuties-v2';
 const CORE=['./','./index.html','./style.css','./script.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));

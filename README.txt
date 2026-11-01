@@ -48,3 +48,17 @@ NOTES
 - Google Fonts requires internet. System serif/sans-serif fallbacks are included.
 - WhatsApp buttons open a pre-filled chat. No payment gateway, cart database, inventory,
   or online checkout is connected.
+
+
+ORDER & CUSTOM CRAFT FORMS
+- Customers can adjust quantity on each product card. The order panel appears when at least one item is selected.
+- Product orders can be submitted to minimalbytwocuties@gmail.com through FormSubmit.
+- When 3 or more total units are selected, a WhatsApp bulk-order button and +91 82698 20509 number appear. Below 3 units, that WhatsApp button and number stay hidden.
+- The Custom Craft form also sends the customer's email and request to minimalbytwocuties@gmail.com.
+- GitHub Pages is static hosting, so these forms use FormSubmit as an external form backend. On the first live submission, FormSubmit will send an activation email to minimalbytwocuties@gmail.com. Open that inbox and click the activation/confirmation link before expecting customer submissions in the inbox. Check Spam if needed.
+- FormSubmit processes form submissions. Review its privacy terms before launch. Keep the hidden honeypot and normal spam protection enabled.
+- The category-list section is a placeholder; add your final categories when decided.
+
+IMPORTANT
+- The 3-item bulk threshold and WhatsApp number are configured in script.js.
+- Prices remain example starting prices until you replace them with your actual confirmed prices.

@@ -123,3 +123,94 @@ window.addEventListener('appinstalled',()=>{if(installButton) installButton.hidd
 if('serviceWorker' in navigator && location.protocol!=='file:'){
  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(error=>console.warn('Offline support unavailable:',error)));
 }
+
+
+// Product order selection: email orders are available for every selection;
+// the WhatsApp number/CTA appears only for bulk orders (3+ units total).
+(()=>{
+ const grid=document.getElementById('productGrid');
+ const panel=document.getElementById('orderPanel');
+ if(!grid || !panel) return;
+ const cards=[...grid.querySelectorAll('.product-card')];
+ const lines=document.getElementById('orderLines');
+ const countLabel=document.getElementById('orderItemCount');
+ const totalLabel=document.getElementById('orderTotal');
+ const summaryField=document.getElementById('orderSummaryField');
+ const totalField=document.getElementById('orderTotalField');
+ const quantityField=document.getElementById('orderQuantityField');
+ const bulkBox=document.getElementById('bulkOrderBox');
+ const bulkButton=document.getElementById('bulkWhatsAppButton');
+ const orderForm=document.getElementById('productOrderForm');
+ const clearButton=document.getElementById('clearOrder');
+ const customerName=orderForm.querySelector('[name="customer_name"]');
+ const customerEmail=orderForm.querySelector('[name="email"]');
+ const customerPhone=orderForm.querySelector('[name="customer_phone"]');
+ const fmt=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+ const getQty=card=>Number(card.querySelector('.quantity-value').textContent)||0;
+ function chosenItems(){return cards.map(card=>({
+   name:card.querySelector('h3')?.textContent.trim()||'Product',
+   price:Number(card.dataset.price)||0,
+   qty:getQty(card)
+ })).filter(item=>item.qty>0)}
+ function render(){
+   const items=chosenItems();
+   const totalQty=items.reduce((sum,item)=>sum+item.qty,0);
+   const total=items.reduce((sum,item)=>sum+item.qty*item.price,0);
+   panel.hidden=totalQty===0;
+   lines.replaceChildren();
+   items.forEach(item=>{
+     const row=document.createElement('div'); row.className='order-line';
+     const name=document.createElement('span'); name.textContent=`${item.name} × ${item.qty}`;
+     const amount=document.createElement('strong'); amount.textContent=fmt(item.price*item.qty);
+     row.append(name,amount); lines.append(row);
+   });
+   countLabel.textContent=`${totalQty} ${totalQty===1?'item':'items'} selected`;
+   totalLabel.textContent=`Estimated total: ${fmt(total)}`;
+   const summary=items.map(item=>`${item.name} x ${item.qty} — ${fmt(item.price*item.qty)} (starting price)`).join('\n');
+   summaryField.value=summary;
+   totalField.value=`${fmt(total)} (estimated starting total; final quote to be confirmed)`;
+   quantityField.value=String(totalQty);
+   const isBulk=totalQty>=3;
+   bulkBox.hidden=!isBulk;
+   const personName=customerName.value.trim()||'Not provided';
+   const email=customerEmail.value.trim()||'Not provided';
+   const phone=customerPhone.value.trim()||'Not provided';
+   const message=[
+     'Hello Minimal By Two Cuties! I would like to place a BULK order.',
+     '', 'Order items:', summary, '',
+     `Estimated starting total: ${fmt(total)}`,
+     `Name: ${personName}`, `Email: ${email}`, `Phone: ${phone}`,
+     '', 'Please confirm availability and final pricing. Thank you!'
+   ].join('\n');
+   bulkButton.href='https://wa.me/918269820509?text='+encodeURIComponent(message);
+ }
+ cards.forEach(card=>{
+   const output=card.querySelector('.quantity-value');
+   card.querySelectorAll('[data-qty-change]').forEach(button=>button.addEventListener('click',()=>{
+     const next=Math.max(0,Math.min(99,getQty(card)+Number(button.dataset.qtyChange)));
+     output.textContent=String(next); render();
+   }));
+ });
+ [customerName,customerEmail,customerPhone].forEach(input=>input.addEventListener('input',render));
+ clearButton.addEventListener('click',()=>{
+   cards.forEach(card=>card.querySelector('.quantity-value').textContent='0');
+   render();
+ });
+ orderForm.addEventListener('submit',event=>{
+   if(chosenItems().length===0){event.preventDefault(); alert('Please select at least one product first.'); return;}
+   render();
+ });
+ render();
+})();
+
+// Small confirmation after the email form redirects back from FormSubmit.
+(()=>{
+ const params=new URLSearchParams(location.search);
+ let message='';
+ if(params.get('order')==='sent') message='Thank you! Your order enquiry has been sent. We’ll reply by email.';
+ if(params.get('custom')==='sent') message='Your Custom Craft idea has been sent. We can’t wait to read it!';
+ if(!message) return;
+ const notice=document.createElement('div'); notice.className='submission-toast'; notice.setAttribute('role','status'); notice.textContent=message;
+ document.body.appendChild(notice);
+ window.setTimeout(()=>notice.classList.add('show'),50);
+})();
